@@ -1,18 +1,18 @@
-# 1️⃣ Use a slim base image
 FROM python:3.12-slim
 
-# 2️⃣ Install Flask
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Avoid generating .pyc files and make stdout flush immediately
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# 3️⃣ Copy source
+WORKDIR /app
+
+# Install dependencies first (layer caching)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code
 COPY app.py .
 
-# 4️⃣ Set default env vars (can be overridden at runtime)
-ENV PORT=5000 SERVER_ID=0
-
-# 5️⃣ Expose port required by the assignment
 EXPOSE 5000
 
-# 6️⃣ Start the server
 CMD ["python", "app.py"]
