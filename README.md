@@ -19,7 +19,6 @@ Key features:
 │   ├── a1_experiment.py        # A-1: N=3 distribution bar chart
 │   ├── a2_experiment.py        # A-2: avg load vs N line chart
 │   ├── a3_experiment.py        # A-3: self-healing demo
-│   ├── a4_experiment.py        # A-4: (optional) custom-hash experiments
 │   ├── requirements.txt        # Python deps for analysis
 │   └── results/                # Generated PNGs
 ├── load_balancer/              # Task 2 & 3 code
