@@ -1,22 +1,29 @@
-# app.py
-from flask import Flask, jsonify
 import os
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-SERVER_ID = os.environ.get("SERVER_ID", "unknown")
+# Picked up from docker-compose or `docker run -e SERVER_ID=<id>`
+SERVER_ID = os.getenv("SERVER_ID", "unknown")
+
 
 @app.get("/home")
 def home():
-    # Matches spec: “Hello from Server: <ID>”  :contentReference[oaicite:0]{index=0}
-    return jsonify(message=f"Hello from Server: {SERVER_ID}",
-                   status="successful"), 200
+    """Return a friendly ID so the load balancer can tell replicas apart."""
+    return jsonify(
+        {
+            "message": f"Hello from Server: {SERVER_ID}",
+            "status": "successful",
+        }
+    ), 200
+
 
 @app.get("/heartbeat")
 def heartbeat():
-    # Empty body but 200 OK is fine  :contentReference[oaicite:1]{index=1}
-    return ("", 200)
+    """Light-weight health-check used by the load balancer."""
+    return "", 200
+
 
 if __name__ == "__main__":
-    # Flask looks at PORT env var; default 5000 per spec
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    # 0.0.0.0 => accept traffic from outside the container
+    app.run(host="0.0.0.0", port=5000)
